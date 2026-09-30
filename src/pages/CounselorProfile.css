@@ -1,0 +1,109 @@
+.counselor-profile-page {
+  max-width: var(--page-max-narrow);
+  margin: 0 auto;
+  padding: var(--page-pad-top) var(--page-gutter) var(--page-pad-bottom);
+}
+
+.cp-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  margin-bottom: 24px;
+}
+
+.cp-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.cp-avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.cp-section {
+  padding: 28px 0;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.cp-section-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: 10px;
+}
+
+.cp-bio {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--color-ink-secondary);
+}
+
+.cp-avail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cp-avail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.cp-avail-day {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.cp-avail-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .cp-header {
+    gap: 14px;
+  }
+  .cp-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 19px;
+  }
+  .cp-section-title {
+    font-size: 18px;
+  }
+}

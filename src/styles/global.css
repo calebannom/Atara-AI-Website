@@ -1,0 +1,844 @@
+:root {
+  /* Structural family — recoloured to the indigo/lavender theme below.
+     (Semantic status colours — ok/warn/risk/pending — stay their usual
+     green/amber/red/violet regardless of brand, on purpose.) */
+  --cw-navy-900: #1C1647;
+  --cw-navy-800: #221B54;
+  --cw-navy-700: #2A207A;
+  --cw-navy-600: #362A96;
+  --cw-navy-500: #4130C5;
+  --cw-navy-400: #5A4AD6;
+  --cw-navy-300: #8478E0;
+
+  --cw-ink: #1A1A2E;
+  --cw-ink-secondary: #6B6B8A;
+  --cw-muted: #6B6B8A;
+  --cw-border: #D4C5EE;
+  --cw-border-soft: #E0D4F3;
+  --cw-surface: #EDE3F9;
+  --cw-canvas: #F5F0FC;
+  --cw-canvas-alt: #F1E9F8;
+  --cw-primary: #4C3BCF;
+  --cw-primary-strong: #3324A9;
+  --cw-accent: #00C9A7;
+  --cw-ok: #15803d;
+  --cw-ok-soft: #dcfce7;
+  --cw-warn: #a16207;
+  --cw-warn-soft: #fef3c7;
+  --cw-risk: #b91c1c;
+  --cw-risk-soft: #fee2e2;
+  --cw-pending: #7c3aed;
+  --cw-pending-soft: #ede9fe;
+
+  /* Core tokens */
+  --color-canvas: #F5F0FC;
+  --color-surface: #EDE3F9;
+  --color-surface-alt: #F1E9F8;
+  --color-surface-elevated: #E3D2F1;
+  --color-ink: #1A1A2E;
+  --color-ink-secondary: #6B6B8A;
+  --color-ink-muted: #9999BB;
+  --color-ink-faint: #9999BB;
+  --color-border: #D4C5EE;
+  --color-border-soft: #E0D4F3;
+  --color-rule: #4C3BCF;
+  --color-error: #b91c1c;
+  --color-success: #15803d;
+  --color-warning: #a16207;
+  --color-pending: #7c3aed;
+  --color-accent: #00C9A7;
+  --color-accent-dark: #00826C;
+  --color-primary: #4C3BCF;
+  --color-primary-dark: #3324A9;
+  --color-primary-soft: #DEDCF0;
+  --color-bloom: #8478E0;
+  --color-input-bg: #E6D8F7;
+
+  --font-display: "Poppins", system-ui, sans-serif;
+  --font-body: "Poppins", system-ui, sans-serif;
+  --font-ui: "Poppins", system-ui, sans-serif;
+
+  --radius: 3px;
+  --radius-lg: 4px;
+  --radius-pill: 2px;
+
+  --shadow-soft: 0 1px 3px rgba(26, 26, 46, 0.06), 0 2px 8px rgba(76, 59, 207, 0.05);
+  --shadow-card: 0 1px 0 rgba(26, 26, 46, 0.04), 0 0 0 1px rgba(26, 26, 46, 0.06);
+  --shadow-glow: 0 0 0 2px rgba(76, 59, 207, 0.12), 0 2px 8px rgba(76, 59, 207, 0.1);
+
+  /* ─── Page layout ────────────────────────────────────────────────
+     Every screen inside the app shell uses one of three content
+     widths and one shared gutter, so content lines up on every route.
+     --page-max-wide and --page-gutter deliberately match
+     .shell-topnav-inner's max-width (1440px) and horizontal padding,
+     which puts a page's left edge directly under the Atara logo. */
+  --page-max-wide: 1440px;
+  --page-max-medium: 1080px;
+  --page-max-narrow: 760px;
+  --page-gutter: 28px;
+  --page-pad-top: 28px;
+  --page-pad-bottom: 56px;
+}
+
+/* One breakpoint for page framing across the whole app — matches the
+   point at which the top nav switches to its own 16px gutter, so the
+   two never disagree about where the content edge is. */
+@media (max-width: 820px) {
+  :root {
+    --page-gutter: 16px;
+    --page-pad-top: 20px;
+    --page-pad-bottom: 40px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ATARA DESIGN SYSTEM v3 — indigo + teal on lavender
+   Declared after the base :root above, so these win.
+
+   Supplied palette: primary #4C3BCF, accent #00C9A7, plus a full set of
+   light-theme neutrals (bg/surface/surface-elevated/border/input-bg/
+   text/text-secondary/text-muted). Those eight values are reproduced
+   here exactly, unmodified — every other token below (hover/dark
+   shades, soft tints, the dark "navy" band used for decorative
+   sections) is derived from them, not invented independently, so nav,
+   hero, cards and buttons all stay one coherent family.
+
+   The neutral spec names --surface "cards, nav bar, panels" explicitly
+   — so the in-app top nav (AppShell.css) moved from a dark band to this
+   same light lavender surface, with the logo, wordmark and nav-link
+   colours all flipped from light-on-dark to dark-on-light to match.
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  /* ─── Brand ─────────────────────────────────────────────────────── */
+  /* --brand is the interactive indigo: 6.62:1 on the page background
+     and 7.41:1 under white text, so both directions clear AA. --lime
+     keeps its old token name for backward compatibility (dozens of
+     existing rules reference it) but now carries the teal accent
+     (#00C9A7) — 2.12:1 under white, so — same rule as before — it's
+     only ever a fill, icon, or dark-text button, never small text on a
+     light background. */
+  --brand: #4C3BCF;
+  --brand-700: #3324A9;
+  --brand-500: #7468D5;
+  --brand-300: #C9C5E8;
+  --brand-100: #DEDCF0;
+  --brand-50: #F6F5FA;
+  --lime: #00C9A7;
+  --lime-soft: #A3F2E5;
+
+  /* Deep indigo — the dark band used behind decorative sections
+     (marketing-page utility bar, footer, breathing exercise) — not the
+     in-app nav, which sits on the light --surface tone instead. */
+  --navy: #1C1647;
+  --navy-700: #2A207A;
+  --navy-500: var(--brand);
+  --navy-100: var(--brand-50);
+
+  /* ─── Surfaces — the supplied neutrals, verbatim ─────────────────── */
+  --color-canvas: #F5F0FC;
+  --color-surface: #EDE3F9;
+  --color-surface-alt: #F1E9F8;
+  --color-surface-elevated: #E3D2F1;
+  --cream: #FBF9FE;
+
+  /* ─── Ink — the supplied neutrals, verbatim ──────────────────────── */
+  --color-ink: #1A1A2E;
+  --color-ink-secondary: #6B6B8A;
+  /* Only three text tiers were supplied; ink-muted and ink-faint both
+     take text-muted. At 2.2–2.5:1 on canvas/surface this is below AA
+     for body-sized text — appropriate for its stated role (placeholders,
+     captions) but worth knowing if it ends up on anything read closely,
+     since ink-muted is also this app's "card subtitle / meta label"
+     tier, which carries more weight than a caption usually does. */
+  --color-ink-muted: #9999BB;
+  --color-ink-faint: #9999BB;
+
+  --color-border: #D4C5EE;
+  --color-border-soft: #E0D4F3;
+
+  /* ─── Primary / accent ────────────────────────────────────────────── */
+  --color-primary: #4C3BCF;
+  --color-primary-dark: #3324A9;
+  --color-primary-soft: #DEDCF0;
+  /* Accent is genuinely distinct from primary now: indigo for trust and
+     interaction, teal for the highlight/energy moments. */
+  --color-accent: var(--lime);
+  --color-accent-dark: #00826C;
+
+  /* ─── Type ──────────────────────────────────────────────────────── */
+  /* Poppins across the board — one geometric sans for display, body and
+     UI. Headings lean on weight and tight tracking to separate themselves
+     rather than on a second family. */
+  --font-display: "Poppins", system-ui, sans-serif;
+  --font-body: "Poppins", system-ui, sans-serif;
+  --font-ui: "Poppins", system-ui, sans-serif;
+
+  /* One scale, replacing the 28 ad-hoc sizes that were in the CSS. */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 20px;
+  --text-xl: 26px;
+  --text-2xl: 34px;
+  --text-3xl: 44px;
+  --text-4xl: 58px;
+
+  /* ─── Shape ─────────────────────────────────────────────────────── */
+  /* Was 3px / 4px / 2px — a "pill" that was a rectangle. */
+  --radius: 10px;
+  --radius-sm: 7px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-pill: 999px;
+
+  /* ─── Elevation — tinted with the ink colour, a real ramp ────────── */
+  --shadow-xs: 0 1px 2px rgba(26, 26, 46, 0.04);
+  --shadow-sm: 0 1px 3px rgba(26, 26, 46, 0.05), 0 1px 2px rgba(26, 26, 46, 0.03);
+  --shadow-md: 0 4px 12px rgba(26, 26, 46, 0.07), 0 1px 3px rgba(26, 26, 46, 0.04);
+  --shadow-lg: 0 12px 32px rgba(26, 26, 46, 0.10), 0 2px 8px rgba(26, 26, 46, 0.04);
+  --shadow-xl: 0 24px 60px rgba(26, 26, 46, 0.14), 0 4px 12px rgba(26, 26, 46, 0.05);
+  --shadow-brand: 0 10px 26px rgba(76, 59, 207, 0.24);
+  /* Existing names kept as aliases so every current card upgrades. */
+  --shadow-soft: var(--shadow-md);
+  --shadow-card: var(--shadow-sm);
+  --shadow-glow: 0 0 0 3px rgba(76, 59, 207, 0.18);
+
+  /* ─── Motion ────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 150ms;
+  --dur: 260ms;
+  --dur-slow: 520ms;
+}
+
+/* One family throughout, so headings separate themselves with weight
+   and tracking instead of a contrasting face. */
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+h1 { font-size: var(--text-2xl); line-height: 1.15; }
+h2 { font-size: var(--text-xl); line-height: 1.2; }
+h3 { font-size: var(--text-md); }
+h4 { font-size: var(--text-base); }
+
+body { font-size: var(--text-base); }
+
+/* ─── Shared motion utilities ─────────────────────────────────────── */
+@keyframes atara-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes atara-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+@keyframes atara-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.045); }
+}
+@keyframes atara-pulse-ring {
+  0%   { transform: scale(0.85); opacity: 0.55; }
+  70%  { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* Revealed by IntersectionObserver as the section scrolls in. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+h1 { font-size: 22px; }
+h2 { font-size: 18px; }
+h3 { font-size: 15px; }
+h4 { font-size: 14px; }
+
+p,
+span,
+li,
+a {
+  font-family: var(--font-body);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+textarea,
+select {
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+
+:root,
+button,
+input,
+textarea,
+select,
+[class*="-pill"],
+[class*="-tag"],
+[class*="-chip"],
+[class*="-badge"],
+[class*="-count"],
+[class*="-label"],
+[class*="-btn"],
+[class*="-submit"],
+[class*="-meta"],
+[class*="-time"],
+[class*="-status"],
+[class*="-hint"],
+[class*="-error"],
+[class*="-notice"],
+[class*="-switch"],
+[class*="-toggle"],
+[class*="nav-link"],
+[class*="-empty"],
+[class*="-stats"] > * {
+  font-family: var(--font-ui);
+}
+
+strong {
+  font-weight: 600;
+}
+
+:focus-visible {
+  outline: 1px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.section-rule {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border-soft);
+  margin: 24px 0;
+  border: none;
+}
+
+.section-rule-dark {
+  width: 100%;
+  height: 1px;
+  background: var(--color-rule);
+  margin: 20px 0;
+  border: none;
+  opacity: 0.7;
+}
+
+/* ─── Shared Button styles ────────────────────────────────────────────── */
+.btn-editorial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 20px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-editorial:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-editorial-primary {
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 1px solid var(--color-primary);
+}
+.btn-editorial-primary:hover:not(:disabled) { background: var(--color-primary-dark); border-color: var(--color-primary-dark); }
+
+.btn-editorial-secondary {
+  background: #fff;
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+}
+.btn-editorial-secondary:hover:not(:disabled) {
+  background: var(--color-surface-alt);
+  border-color: var(--color-ink-muted);
+}
+
+.btn-editorial-ghost {
+  background: transparent;
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
+}
+.btn-editorial-ghost:hover:not(:disabled) {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
+
+.btn-editorial-sm {
+  padding: 7px 14px;
+  font-size: 10.5px;
+}
+.btn-editorial-lg {
+  padding: 11px 26px;
+  font-size: 11.5px;
+}
+
+/* ─── Status Badges ─────────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-badge::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-confirmed {
+  background: var(--cw-ok-soft);
+  color: var(--cw-ok);
+  border-color: rgba(21, 128, 61, 0.2);
+}
+
+.status-pending {
+  background: var(--cw-pending-soft);
+  color: var(--cw-pending);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.status-cancelled {
+  background: var(--cw-risk-soft);
+  color: var(--cw-risk);
+  border-color: rgba(185, 28, 28, 0.2);
+}
+
+.status-completed {
+  background: #eff6ff;
+  color: var(--cw-primary);
+  border-color: rgba(30, 64, 175, 0.18);
+}
+
+/* ─── Data Table ─────────────────────────────────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.data-table thead {
+  background: var(--color-surface-alt);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.data-table th {
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.data-table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-border-soft);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tbody tr:hover {
+  background: var(--color-surface-alt);
+}
+
+.data-table .table-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pagination-info {
+  font-size: 11.5px;
+  color: var(--color-ink-muted);
+  font-weight: 500;
+}
+
+.pagination-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.pagination-btn {
+  padding: 7px 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  min-width: 34px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.pagination-btn:last-child { border-right: none; }
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-btn-active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.pagination-btn-active:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  color: #fff;
+}
+
+/* ─── Card Base ──────────────────────────────────────────────────── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: 0.02em;
+}
+
+.card-body {
+  padding: 18px;
+}
+
+/* ─── Confirmation Dialog ──────────────────────────────────────────────── */
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 22, 40, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: confirm-fade 0.15s ease-out;
+}
+@keyframes confirm-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.confirm-dialog {
+  background: var(--color-surface);
+  max-width: 420px;
+  width: 100%;
+  padding: 22px 22px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  animation: confirm-pop 0.18s ease-out;
+}
+@keyframes confirm-pop {
+  from {
+    transform: translateY(4px) scale(0.985);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.confirm-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-ink);
+}
+
+.confirm-body {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-ink-secondary);
+  margin-bottom: 20px;
+}
+.confirm-body strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.confirm-cancel {
+  padding: 8px 16px;
+  background: #fff;
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  transition: all 0.15s;
+}
+.confirm-cancel:hover {
+  border-color: var(--color-ink-muted);
+  color: var(--color-ink);
+}
+
+.confirm-confirm {
+  padding: 8px 18px;
+  background: var(--color-primary);
+  color: #fff;
+  border: 1px solid var(--color-primary);
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  transition: background 0.15s;
+}
+.confirm-confirm:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+.confirm-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.confirm-confirm.confirm-safe {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.confirm-confirm.confirm-safe:hover {
+  background: var(--color-primary-dark);
+}
+
+/* ─── Password input (with eye toggle) ──────────────────────────────────── */
+.auth-password-wrap {
+  position: relative;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  color: var(--color-ink-muted);
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  transition: color 0.15s, background 0.15s;
+}
+.auth-password-toggle:hover {
+  color: var(--color-ink-secondary);
+  background: rgba(10, 22, 40, 0.04);
+}
+.auth-password-wrap .auth-input {
+  padding-right: 40px;
+}
+
+/* ─── Forgot password link ──────────────────────────────────────────────── */
+.auth-forgot {
+  display: block;
+  margin: -2px 2px 12px auto;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--color-ink-secondary);
+  text-align: right;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.auth-forgot:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.auth-success {
+  padding: 10px 14px;
+  background: rgba(21, 128, 61, 0.08);
+  color: #14532d;
+  border: 1px solid rgba(21, 128, 61, 0.15);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ─── RBAC Access Loader ─────────────────────────────────────────────── */
+.rbac-loader {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--color-canvas);
+  font-family: var(--font-ui);
+}
+.rbac-loader-ring {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rbac-loader-spinner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(30, 64, 175, 0.12);
+  border-top-color: var(--color-primary);
+  border-right-color: var(--color-bloom);
+  animation: rbac-spin 1s linear infinite;
+}
+.rbac-loader-logo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+}
+.rbac-loader-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ink-secondary);
+  letter-spacing: 0.02em;
+}
+@keyframes rbac-spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: rbac-spin 0.9s linear infinite;
+}

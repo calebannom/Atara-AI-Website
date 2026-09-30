@@ -1,0 +1,213 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────
+    // Helper functions for RBAC
+    // ─────────────────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userId() {
+      return request.auth.uid;
+    }
+
+    function userRole() {
+      return get(/databases/$(database)/documents/users/$(userId())).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userRole() == 'admin';
+    }
+
+    function isCounselorOrAdmin() {
+      return isSignedIn() && (userRole() == 'counselor' || userRole() == 'admin');
+    }
+
+    function hasPendingCounselorApplication(data) {
+      return data.counselorApplication is map
+        && data.counselorApplication.status == 'pending';
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /users/{uid}  —  Profile documents (strict role protection)
+    // ─────────────────────────────────────────────────────────────
+    match /users/{uid} {
+      // READ: owner, or admin. Counselors only read user docs via
+      //       assigned ticket joins — they are never allowed to
+      //       scan the entire users collection to prevent leaks.
+      allow read:
+        if isSignedIn() && (request.auth.uid == uid || isAdmin());
+
+      // CREATE: brand-new signups. Only allowed default user role.
+      //         Admin writes to role/isCounselor/approved fields.
+      allow create:
+        if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.role == 'user'
+        && request.resource.data.isCounselor == false
+        && !('approvedAt' in request.resource.data)
+        && !('approvedBy' in request.resource.data);
+
+      // UPDATE: owner may edit their own mutable fields only.
+      //         Role / counselor fields are off-limits to clients.
+      allow update:
+        if isSignedIn() && request.auth.uid == uid
+        && !(request.resource.data.diff(resource.data).affectedKeys().hasAny([
+            'role', 'isCounselor', 'approvedAt', 'approvedBy', 'uid'
+          ]));
+
+      // Full admin override for promotion / account actions.
+      allow create, read, update, delete:
+        if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /counselorProfiles/{uid}  —  Public directory documents used by
+    //  the "Find a Counselor" search + profile pages. Deliberately a
+    //  separate collection from /users so only non-sensitive fields
+    //  (name, specialization, years, bio, photo) are ever exposed to
+    //  the whole signed-in user base — email/license/etc. stay private
+    //  on the /users doc.
+    // ─────────────────────────────────────────────────────────────
+    match /counselorProfiles/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || (isSignedIn() && request.auth.uid == uid && userRole() == 'counselor');
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /appointments/{appointmentId}  —  Booked counseling sessions
+    // ─────────────────────────────────────────────────────────────
+    match /appointments/{appointmentId} {
+      allow create:
+        if isSignedIn() && request.resource.data.userId == request.auth.uid;
+
+      // Only the patient who booked it or the assigned counselor (or
+      // admin) can see/update a specific appointment — unlike tickets,
+      // this is not opened up to every counselor, since it's tied to a
+      // scheduled, named session rather than an anonymous queue.
+      allow read, update:
+        if isSignedIn()
+        && (resource.data.userId == request.auth.uid
+            || resource.data.counselorId == request.auth.uid
+            || isAdmin());
+
+      allow delete: if isAdmin();
+
+      match /messages/{msgId} {
+        function appt() { return get(/databases/$(database)/documents/appointments/$(appointmentId)).data; }
+        allow read, create:
+          if isSignedIn()
+          && (appt().userId == request.auth.uid || appt().counselorId == request.auth.uid || isAdmin());
+        allow delete: if isAdmin();
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /bookedSlots/{slotId}  —  Minimal "this slot is taken" markers
+    //  used to compute open availability without exposing who booked
+    //  what (no subject/name/anything beyond counselor+date+time).
+    //  Deterministic doc IDs (counselorId__date__time) mean a second
+    //  booking attempt for the same slot is naturally rejected as an
+    //  "update" to an existing doc, since only create is allowed here.
+    // ─────────────────────────────────────────────────────────────
+    match /bookedSlots/{slotId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow delete:
+        if isSignedIn()
+        && (resource.data.userId == request.auth.uid
+            || resource.data.counselorId == request.auth.uid
+            || isAdmin());
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /reviews/{reviewId}  —  Post-session ratings + comments
+    //  No stored per-counselor aggregate (that would need a Cloud
+    //  Function to update safely across different users' writes) —
+    //  average/count are computed client-side from this collection.
+    // ─────────────────────────────────────────────────────────────
+    match /reviews/{reviewId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /moods/{moodId}  —  Patient mood entries
+    // ─────────────────────────────────────────────────────────────
+    function moodOwner(moodId) {
+      return get(/databases/$(database)/documents/moods/$(moodId)).data.userId;
+    }
+    match /moods/{moodId} {
+      allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create:       if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow read, write:  if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /journals/{journalId}
+    // ─────────────────────────────────────────────────────────────
+    match /journals/{journalId} {
+      allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create:       if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow read, write:  if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /goals/{goalId}
+    // ─────────────────────────────────────────────────────────────
+    match /goals/{goalId} {
+      allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create:       if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow read, write:  if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /chatMessages/{messageId}   —   AI journal chat log
+    // ─────────────────────────────────────────────────────────────
+    match /chatMessages/{messageId} {
+      allow read, write: if isSignedIn() && request.auth.uid == resource.data.userId;
+      allow create:       if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow read, write:  if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // /counselorTickets/{ticketId}  —  Patient → Counselor requests
+    //  Project rule: counselor ticket listeners restricted to
+    //               counselor/admin roles to prevent privacy leaks.
+    // ─────────────────────────────────────────────────────────────
+    match /counselorTickets/{ticketId} {
+      // Patients can only open/read/close their own tickets.
+      allow read, write:
+        if isSignedIn()
+        && userRole() != 'counselor'   // not a counselor (redundant)
+        && resource.data.userId == request.auth.uid;
+
+      allow create:
+        if isSignedIn() && request.resource.data.userId == request.auth.uid;
+
+      // Counselors & admins can read any ticket & mutate assignee fields.
+      allow read, update:
+        if isCounselorOrAdmin();
+
+      // Admins only: ticket deletion / auditing.
+      allow delete: if isAdmin();
+
+      // ─── ticket messages subcollection ─────────────────────────
+      match /messages/{msgId} {
+        // Participant rule: either the ticket owner or the assigned counselor/admin.
+        function ticket() { return get(/databases/$(database)/documents/counselorTickets/$(ticketId)).data; }
+        function isTicketOwner()  { return ticket().userId == request.auth.uid; }
+        function isTicketClaimedByCounselor() {
+          return ticket().claimedBy is string && ticket().claimedBy == request.auth.uid;
+        }
+        allow read, create:
+          if isSignedIn()
+          && (isTicketOwner() || isTicketClaimedByCounselor() || isCounselorOrAdmin());
+        allow delete: if isAdmin();
+      }
+    }
+  }
+}

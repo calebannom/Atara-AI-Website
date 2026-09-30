@@ -1,0 +1,69 @@
+.cav-page {
+  max-width: var(--page-max-narrow);
+  margin: 0 auto;
+  padding: var(--page-pad-top) var(--page-gutter) var(--page-pad-bottom);
+}
+
+.cav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.cav-row-active {
+  border-color: var(--color-primary-soft);
+  background: var(--color-input-bg);
+}
+
+.cav-day-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.cav-time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-ink-muted);
+}
+
+.cav-time-inputs input[type="time"] {
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+
+.cav-note {
+  margin-top: 12px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--color-ink-muted);
+}
+
+.cav-error {
+  margin-top: 16px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-error);
+}

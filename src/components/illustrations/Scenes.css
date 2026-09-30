@@ -1,0 +1,62 @@
+/* Motion for the illustrated scenes. Every animation is small and slow —
+   the figures should feel alive, not busy. All of it is switched off by
+   the global prefers-reduced-motion rule. */
+
+.ill-sway {
+  animation: ill-sway 6s ease-in-out infinite;
+}
+@keyframes ill-sway {
+  0%, 100% { transform: rotate(-1.6deg); }
+  50%      { transform: rotate(1.6deg); }
+}
+
+/* The two speech bubbles alternate, so the scene reads as a
+   back-and-forth conversation rather than two people talking at once. */
+.ill-bubble-a {
+  animation: ill-bubble 5.4s var(--ease-out) infinite;
+}
+.ill-bubble-b {
+  animation: ill-bubble 5.4s var(--ease-out) infinite;
+  animation-delay: 2.7s;
+}
+@keyframes ill-bubble {
+  0%       { opacity: 0; transform: translateY(10px) scale(0.9); }
+  10%, 42% { opacity: 1; transform: none; }
+  52%      { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  100%     { opacity: 0; transform: translateY(-6px) scale(0.97); }
+}
+
+.ill-twinkle {
+  animation: ill-twinkle 3.2s ease-in-out infinite;
+}
+.ill-delay { animation-delay: 1.4s; }
+@keyframes ill-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50%      { opacity: 0.85; transform: scale(1.15); }
+}
+
+.ill-hop {
+  animation: ill-hop 2.4s var(--ease-spring) infinite;
+}
+@keyframes ill-hop {
+  0%, 100% { transform: translateY(0); }
+  45%      { transform: translateY(-14px); }
+}
+
+.ill-fall {
+  animation: ill-fall 4.5s linear infinite;
+}
+@keyframes ill-fall {
+  0%   { opacity: 0; transform: translateY(-24px) rotate(0deg); }
+  15%  { opacity: 0.85; }
+  85%  { opacity: 0.85; }
+  100% { opacity: 0; transform: translateY(46px) rotate(180deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ill-sway, .ill-bubble-a, .ill-bubble-b,
+  .ill-twinkle, .ill-hop, .ill-fall {
+    animation: none;
+  }
+  .ill-bubble-a, .ill-bubble-b { opacity: 1; transform: none; }
+}
